@@ -1,5 +1,17 @@
 console.log("fsociety");
 
+function pronounceWord(word) {
+    // 1️⃣ Create a new speech object with the word to speak
+    const utterance = new SpeechSynthesisUtterance(word);
+
+    // 2️⃣ Set the language for pronunciation
+    utterance.lang = "en-EN"; // English
+
+    // 3️⃣ Use the browser’s speech engine to "say" the word
+    window.speechSynthesis.speak(utterance);
+}
+
+
 const manageSpinner = (status) => {
     if (status  === true) {
         document.getElementById("spinner").classList.remove("hidden");
@@ -26,14 +38,16 @@ const removeActive = () => {
 
 const loadLevelWord = (id) => {
     manageSpinner(true);
+
     const url = `https://openapi.programming-hero.com/api/level/${id}`;
+
     fetch(url)
-    .then(res => res.json())
-    .then(data => {
-        removeActive(); // remove all active class
-        const clickBtn = document.getElementById(`lesson-btn-${id}`);
-        clickBtn.classList.add("active"); // add active class
-        displayLevelWords(data?.data)});
+        .then(res => res.json())
+        .then(data => {
+            removeActive(); // remove all active class
+            const clickBtn = document.getElementById(`lesson-btn-${id}`);
+            clickBtn.classList.add("active"); // add active class
+            displayLevelWords(data?.data)});
 }
 
 const loadWordDetail = async (id) => {
@@ -63,7 +77,7 @@ const displayWordDetail = wordDetail => {
             "id": 5
         }
     */ 
-    const synonymsHTML = wordDetail?.synonyms?.length ? wordDetail.synonyms.map(syn => `<span class="btn">${syn}</span>`).join(" ") : `<span class="text-gray-500">No synonyms found</span>`;
+    const synonymsHTML = wordDetail?.synonyms?.length ? wordDetail.synonyms.map(syn => `<span class="btn btn-soft btn-info">${syn}</span>`).join(" ") : `<span class="text-gray-500">No synonyms found</span>`;
 
     detailsBox.innerHTML = `
         <div>
@@ -130,7 +144,7 @@ const displayLevelWords = words => {
                     <button onclick="loadWordDetail(${word.id})" class="btn bg-[#1A91FF10] hover:bg-[#1A91FF80]">
                         <i class="fa-solid fa-circle-info"></i>
                     </button>
-                    <button class="btn bg-[#1A91FF10] hover:bg-[#1A91FF80]">
+                    <button onclick="pronounceWord('${word.word}')" class="btn bg-[#1A91FF10] hover:bg-[#1A91FF80]">
                         <i class="fa-solid fa-volume-high"></i>
                     </button>
                 </div>
@@ -172,3 +186,30 @@ const displayLessons = (lessons) => {
 };
 
 loadLessons();
+
+document.getElementById("btn-search").addEventListener("click", () => {
+    removeActive();
+
+    const input = document.getElementById("input-search");
+    const searchValue = input.value.trim().toLowerCase();
+
+    const url = "https://openapi.programming-hero.com/api/words/all"
+    fetch(url)
+    .then(res => res.json())
+    .then(data => {
+        const allWords = data.data;
+        const filterWords = allWords.filter(word => word.word.toLowerCase().includes(searchValue));
+        displayLevelWords(filterWords);
+    })
+
+    /*
+        {
+            "id": 1,
+            "level": 3,
+            "word": "Abundant",
+            "meaning": null,
+            "pronunciation": "অবানডান্ট"
+        }
+    */ 
+
+})
