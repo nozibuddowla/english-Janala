@@ -25,6 +25,59 @@ const loadLevelWord = (id) => {
         displayLevelWords(data?.data)});
 }
 
+const loadWordDetail = async (id) => {
+    const url = `https://openapi.programming-hero.com/api/word/${id}`;
+    const response = await fetch(url);
+    const detail = await response.json();
+    displayWordDetail(detail.data);
+    
+}
+
+const displayWordDetail = wordDetail => {
+    console.log(wordDetail);
+    const detailsBox = document.getElementById("detail-container");
+    /*
+        {
+            "word": "Eager",
+            "meaning": "আগ্রহী",
+            "pronunciation": "ইগার",
+            "level": 1,
+            "sentence": "The kids were eager to open their gifts.",
+            "points": 1,
+            "partsOfSpeech": "adjective",
+            "synonyms": [
+                "enthusiastic",
+                "excited",
+                "keen"
+            ],
+            "id": 5
+        }
+    */ 
+    detailsBox.innerHTML = `
+        <div>
+            <h2 class="text-3xl font-semibold">${wordDetail.word} (<i class="fa-solid fa-microphone-lines"></i> : ${wordDetail.pronunciation})</h2>
+        </div>
+        <div>
+            <h3 class="text-2xl font-semibold">Meaning</h3>
+            <p class="text-2xl font-medium font-bangla">${wordDetail.meaning}</p>
+        </div>
+        <div>
+            <h3 class="text-2xl font-semibold">Example</h3>
+            <p class="text-2xl">${wordDetail.sentence}</p>
+        </div>
+        <div>
+            <h3 class="text-2xl font-medium font-bangla">সমার্থক শব্দ গুলো</h3>
+        </div>
+        <div>
+            <h2 class="font-bold">Synonym</h2>
+            <span class="btn">Syn1</span>
+            <span class="btn">Syn2</span>
+            <span class="btn">Syn3</span>
+        </div>
+    `
+    document.getElementById("word_modal").showModal();
+}
+
 const displayLevelWords = words => {
     // 1. get the container & empty
     const wordContainer = document.getElementById("word-container");
@@ -62,7 +115,7 @@ const displayLevelWords = words => {
                     ${word.meaning ? word.meaning : "অর্থ পাওয়া যায়নি"} / ${word.pronunciation ? word.pronunciation : "Pronounciation পাওয়া  যায়নি"}
                 </p> 
                 <div class="flex justify-between items-center">
-                    <button onclick="my_modal_5.showModal()" class="btn bg-[#1A91FF10] hover:bg-[#1A91FF80]">
+                    <button onclick="loadWordDetail(${word.id})" class="btn bg-[#1A91FF10] hover:bg-[#1A91FF80]">
                         <i class="fa-solid fa-circle-info"></i>
                     </button>
                     <button class="btn bg-[#1A91FF10] hover:bg-[#1A91FF80]">
