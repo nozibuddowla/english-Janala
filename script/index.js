@@ -1,5 +1,15 @@
 console.log("fsociety");
 
+const manageSpinner = (status) => {
+    if (status  === true) {
+        document.getElementById("spinner").classList.remove("hidden");
+        document.getElementById("word-container").classList.add("hidden");
+    } else {
+        document.getElementById("spinner").classList.add("hidden");
+        document.getElementById("word-container").classList.remove("hidden");
+    }
+}
+
 const loadLessons = () => {
     const url = "https://openapi.programming-hero.com/api/levels/all";
     fetch(url) // promises of response
@@ -15,6 +25,7 @@ const removeActive = () => {
 }
 
 const loadLevelWord = (id) => {
+    manageSpinner(true);
     const url = `https://openapi.programming-hero.com/api/level/${id}`;
     fetch(url)
     .then(res => res.json())
@@ -34,7 +45,6 @@ const loadWordDetail = async (id) => {
 }
 
 const displayWordDetail = wordDetail => {
-    console.log(wordDetail);
     const detailsBox = document.getElementById("detail-container");
     /*
         {
@@ -53,6 +63,8 @@ const displayWordDetail = wordDetail => {
             "id": 5
         }
     */ 
+    const synonymsHTML = wordDetail?.synonyms?.length ? wordDetail.synonyms.map(syn => `<span class="btn">${syn}</span>`).join(" ") : `<span class="text-gray-500">No synonyms found</span>`;
+
     detailsBox.innerHTML = `
         <div>
             <h2 class="text-3xl font-semibold">${wordDetail.word} (<i class="fa-solid fa-microphone-lines"></i> : ${wordDetail.pronunciation})</h2>
@@ -70,9 +82,8 @@ const displayWordDetail = wordDetail => {
         </div>
         <div>
             <h2 class="font-bold">Synonym</h2>
-            <span class="btn">Syn1</span>
-            <span class="btn">Syn2</span>
-            <span class="btn">Syn3</span>
+            <div>${synonymsHTML}</div>
+            
         </div>
     `
     document.getElementById("word_modal").showModal();
@@ -91,6 +102,7 @@ const displayLevelWords = words => {
                 <h2 class="font-bold text-4xl mt-3">নেক্সট Lesson এ যান</h2>
             </div>
         `;
+        manageSpinner(false);
         return;
     }
 
@@ -128,6 +140,7 @@ const displayLevelWords = words => {
         // 4. append into container
         wordContainer.append(cardDiv);
     });
+    manageSpinner(false);
 }
 
 const displayLessons = (lessons) => {
