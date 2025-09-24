@@ -7,11 +7,22 @@ const loadLessons = () => {
     .then(data => displayLessons(data.data))
 }
 
+const removeActive = () => {
+    const lessonBtns = document.querySelectorAll(".lesson-btn");
+    lessonBtns.forEach(btn => {
+        btn.classList.remove("active")
+    });
+}
+
 const loadLevelWord = (id) => {
     const url = `https://openapi.programming-hero.com/api/level/${id}`;
     fetch(url)
     .then(res => res.json())
-    .then(data => displayLevelWords(data?.data))
+    .then(data => {
+        removeActive(); // remove all active class
+        const clickBtn = document.getElementById(`lesson-btn-${id}`);
+        clickBtn.classList.add("active"); // add active class
+        displayLevelWords(data?.data)});
 }
 
 const displayLevelWords = words => {
@@ -51,7 +62,7 @@ const displayLevelWords = words => {
                     ${word.meaning ? word.meaning : "অর্থ পাওয়া যায়নি"} / ${word.pronunciation ? word.pronunciation : "Pronounciation পাওয়া  যায়নি"}
                 </p> 
                 <div class="flex justify-between items-center">
-                    <button class="btn bg-[#1A91FF10] hover:bg-[#1A91FF80]">
+                    <button onclick="my_modal_5.showModal()" class="btn bg-[#1A91FF10] hover:bg-[#1A91FF80]">
                         <i class="fa-solid fa-circle-info"></i>
                     </button>
                     <button class="btn bg-[#1A91FF10] hover:bg-[#1A91FF80]">
